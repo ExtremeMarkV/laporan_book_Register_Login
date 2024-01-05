@@ -41,8 +41,6 @@ class _ListItemState extends State<ListItem> {
   // build
   @override
     Widget build(BuildContext context) {
-      print("Status: ${widget.laporan.status}");
-      print("Tanggal: ${widget.laporan.tanggal}");
       return Container(
         decoration: BoxDecoration(
             border: Border.all(width: 2),
