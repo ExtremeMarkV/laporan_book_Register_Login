@@ -41,6 +41,8 @@ class _ListItemState extends State<ListItem> {
   // build
   @override
     Widget build(BuildContext context) {
+      print("Status: ${widget.laporan.status}");
+      print("Tanggal: ${widget.laporan.tanggal}");
       return Container(
         decoration: BoxDecoration(
             border: Border.all(width: 2),
@@ -82,8 +84,8 @@ class _ListItemState extends State<ListItem> {
               widget.laporan.gambar != ''
                   ? Image.network(
                       widget.laporan.gambar!,
-                      width: 100,
-                      height: 100,
+                      width: 90,
+                      height: 90,
                     )
                   : Image.asset(
                       'assets/istock-default.jpg',
@@ -116,7 +118,7 @@ class _ListItemState extends State<ListItem> {
                       alignment: Alignment.center,
                       child: Text(
                         widget.laporan.status,
-                        style: headerStyle(level: 5, dark: false),
+                        style: headerStyle(level: 4),
                       ),
                     ),
                   ),
@@ -132,7 +134,7 @@ class _ListItemState extends State<ListItem> {
                       alignment: Alignment.center,
                       child: Text(
                         DateFormat('dd/MM/yyyy').format(widget.laporan.tanggal),
-                        style: headerStyle(level: 5, dark: false),
+                        style: headerStyle(level: 4),
                       ),
                     ),
                   )
