@@ -82,13 +82,13 @@ class _ListItemState extends State<ListItem> {
               widget.laporan.gambar != ''
                   ? Image.network(
                       widget.laporan.gambar!,
-                      width: 130,
-                      height: 130,
+                      width: 100,
+                      height: 100,
                     )
                   : Image.asset(
                       'assets/istock-default.jpg',
-                      width: 130,
-                      height: 130,
+                      width: 100,
+                      height: 100,
                     ),
               Container(
                 width: double.infinity,

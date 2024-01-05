@@ -30,7 +30,7 @@ import 'package:laporan_book/models/akun.dart';
                 child: Column(
                   children: [
                     SizedBox(
-                      height: 100,
+                      height: 50,
                     ),
                     Text(
                       widget.akun.nama,
