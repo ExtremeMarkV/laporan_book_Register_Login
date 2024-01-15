@@ -41,6 +41,8 @@ class _ListItemState extends State<ListItem> {
   // build
   @override
     Widget build(BuildContext context) {
+        print(widget.laporan.status);
+
       return Container(
         decoration: BoxDecoration(
             border: Border.all(width: 2),
@@ -87,13 +89,13 @@ class _ListItemState extends State<ListItem> {
                     )
                   : Image.asset(
                       'assets/istock-default.jpg',
-                      width: 100,
-                      height: 100,
+                      width: 90,
+                      height: 90,
                     ),
               Container(
                 width: double.infinity,
                 alignment: Alignment.center,
-                padding: const EdgeInsets.symmetric(vertical: 10),
+                padding: const EdgeInsets.symmetric(vertical: 0),
                 decoration: const BoxDecoration(
                     border: Border.symmetric(horizontal: BorderSide(width: 2))),
                 child: Text(
@@ -105,7 +107,8 @@ class _ListItemState extends State<ListItem> {
                 children: [
                   Expanded(
                     child: Container(
-                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      padding: const EdgeInsets.symmetric(vertical: 0),
+                      width: double.infinity,
                       decoration: BoxDecoration(
                           color: warningColor,
                           borderRadius: const BorderRadius.only(
@@ -116,13 +119,14 @@ class _ListItemState extends State<ListItem> {
                       alignment: Alignment.center,
                       child: Text(
                         widget.laporan.status,
-                        style: headerStyle(level: 4),
+                        style: TextStyle(color: Colors.black, fontSize: 14),
                       ),
                     ),
                   ),
                   Expanded(
                     child: Container(
                       padding: const EdgeInsets.symmetric(vertical: 8),
+                      width: double.infinity,
                       decoration: BoxDecoration(
                           color: primaryColor,
                           borderRadius: const BorderRadius.only(
@@ -132,7 +136,7 @@ class _ListItemState extends State<ListItem> {
                       alignment: Alignment.center,
                       child: Text(
                         DateFormat('dd/MM/yyyy').format(widget.laporan.tanggal),
-                        style: headerStyle(level: 4),
+                        style: TextStyle(color: Colors.black, fontSize: 14),
                       ),
                     ),
                   )

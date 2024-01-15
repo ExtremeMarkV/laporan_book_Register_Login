@@ -1,9 +1,12 @@
-  import 'package:flutter/material.dart';
-  import 'package:laporan_book/components/status_dialog.dart';
-  import 'package:intl/intl.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:laporan_book/components/status_dialog.dart';
+import 'package:intl/intl.dart';
 import 'package:laporan_book/components/styles.dart';
 import 'package:laporan_book/models/akun.dart';
 import 'package:laporan_book/models/laporan.dart';
+import 'package:laporan_book/models/like.dart';
   import 'package:url_launcher/url_launcher.dart';
 
   class DetailPage extends StatefulWidget {
@@ -13,8 +16,106 @@ import 'package:laporan_book/models/laporan.dart';
   }
 
   class _DetailPageState extends State<DetailPage> {
+    final _firestore = FirebaseFirestore.instance;
+    final _auth = FirebaseAuth.instance;
     bool _isLoading = false;
+    bool isLiked = false;
+    List<like> listlike = [];
     String? status;
+
+    void addTransaksi(Akun akun) async {
+    setState(() {
+      _isLoading = true;
+    });
+    try {
+      CollectionReference laporanCollection = _firestore.collection('like');
+
+      // Convert DateTime to Firestore Timestamp
+      Timestamp timestamp = Timestamp.fromDate(DateTime.now());
+
+
+      final id = laporanCollection.doc().id;
+
+      await laporanCollection.doc(id).set({
+        'uid': _auth.currentUser!.uid,
+        'docId': id,
+        'nama': akun.nama,
+        'tanggal': timestamp,
+        'Liked': 1,
+      }).catchError((e) {
+        throw e;
+      });
+      Navigator.popAndPushNamed(context, '/dashboard');
+    } catch (e) {
+      final snackbar = SnackBar(content: Text(e.toString()));
+      ScaffoldMessenger.of(context).showSnackBar(snackbar);
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+    // Fungsi untuk menangani tombol like
+  void handleLikeButton(Akun akun, Laporan laporan) async {
+    QuerySnapshot<Map<String, dynamic>> querySnapshot = await _firestore
+          .collection('like')
+          .where('uid', isEqualTo: _auth.currentUser!.uid)
+          .limit(1) // kondisi untuk menccari laporan yang sesuai dengan akun yang telah login
+          .get();
+          for (var documents in querySnapshot.docs) {
+          final String likedNama = documents.data()['nama'];
+          final likedValue = documents.data()['liked'];
+          final likeddoc = documents.data()['docId'];
+
+          if (likedNama != null && likedValue != null) {
+              // Tambahkan data ke listlike
+              listlike.add(
+                like(
+                  uid: documents.data()['uid'],
+                  docId: likeddoc,
+                  nama: likedNama,
+                  liked: likedValue,
+                  tanggal: documents['tanggal'].toDate(),
+                ),
+              );
+
+              // Cek apakah data like sesuai dengan kondisi yang diinginkan
+              if (likedNama == akun.nama &&  likeddoc == laporan.docId) {
+                setState(() {
+                  isLiked = true;
+                });
+              }
+            }
+            
+        }
+    if (!isLiked) {
+      CollectionReference laporanCollection = _firestore.collection('like');
+
+      // Convert DateTime to Firestore Timestamp
+      Timestamp timestamp = Timestamp.fromDate(DateTime.now());
+
+
+      final id = laporanCollection.doc().id;
+
+      await laporanCollection.doc(id).set({
+        'uid': _auth.currentUser!.uid,
+        'docId': laporan.docId,
+        'nama': akun.nama,
+        'tanggal': timestamp,
+        'liked' : 1,
+      }).catchError((e) {
+        throw e;
+      });
+      // Kirim data user yang melakukan like dan timestamp
+      // ...
+
+      // Set state agar tombol like tidak bisa diklik lagi
+      setState(() {
+        isLiked = false;
+      });
+    }
+   
+  }
 
     Future launch(String uri) async {
       if (uri == '') return;
@@ -105,6 +206,18 @@ import 'package:laporan_book/models/laporan.dart';
                             textStatus(
                                 laporan.instansi, Colors.white, Colors.black),
                           ],
+                        ),
+                        const SizedBox(height: 20),
+                        Visibility(
+                          visible: isLiked = true,
+                          child: IconButton(
+                          icon: Icon(
+                            isLiked ? Icons.favorite : Icons.favorite_border,
+                            color: isLiked ? Colors.red : null,
+                          ),
+                          onPressed:() {handleLikeButton(akun,laporan);}
+                        
+                          ),
                         ),
                         const SizedBox(height: 20),
                         ListTile(
